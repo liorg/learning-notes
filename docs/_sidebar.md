@@ -2,8 +2,9 @@
 
 - [Home](/)
 
-- NLP
-  - [LSTM](nlp/lstm.md)
+- Deep Learning
+  - [Matrix](deep-learning/matrix.md)
 
-- Cloud
-  - [Google Cloud](cloud/gcp.md)
+- Math
+  - [linear Regration](math/linear-regration.md)
+  - [logic Regration](math/logic-regration.md)
