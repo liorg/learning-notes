@@ -1,9 +1,9 @@
 # Topics
 
 - [Home](/)
-  
-~[Deep Learning]
-   [Matrix](Dl/Epoches.md)
-- [Math]
-  - [linear Regration](math/linear.md)
-  - [logic Regration](math/nonlinear.md)
+
+- NLP
+  - [LSTM](nlp/lstm.md)
+
+- Cloud
+  - [Google Cloud](cloud/gcp.md)
