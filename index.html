@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Notes — liorg</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0d14; --surface:#111520; --surface2:#161b2e; --border:#1e2640;
+  --accent:#4f8ef7; --accent2:#a78bfa; --accent3:#34d399; --accent4:#f59e0b; --accent5:#f87171;
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#475569;
+  --sidebar-w:270px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden;}
+#sidebar{width:var(--sidebar-w);background:var(--surface);border-left:1px solid var(--border);position:fixed;right:0;top:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column;}
+#sidebar::-webkit-scrollbar{width:3px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sidebar-header{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sidebar-sub{font-size:10px;color:var(--text3);margin-top:3px;letter-spacing:0.1em;text-transform:uppercase;}
+.sidebar-section{padding:14px 10px 4px;}
+.section-label{font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);padding:0 8px;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--text2);transition:all 0.15s;margin-bottom:2px;border:1px solid transparent;user-select:none;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-color:var(--border);}
+.nav-item.active{background:rgba(79,142,247,0.1);color:var(--accent);border-color:rgba(79,142,247,0.22);}
+.nav-icon{font-size:15px;flex-shrink:0;}
+#main{margin-right:var(--sidebar-w);flex:1;padding:44px 52px;max-width:860px;}
+.page-section{display:none;animation:fadeIn 0.25s ease;}
+.page-section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.hero-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2);padding:3px 10px;border-radius:20px;margin-bottom:14px;}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:8px;}
+.section-desc{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:28px;border-right:3px solid var(--accent);padding-right:14px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px;transition:border-color 0.2s;}
+.card:hover{border-color:rgba(79,142,247,0.35);}
+.card-title{font-size:15px;font-weight:700;margin-bottom:10px;}
+.card p{font-size:13.5px;color:var(--text2);line-height:1.75;}
+.code-block{background:#060810;border:1px solid var(--border);border-radius:9px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;overflow-x:auto;direction:ltr;text-align:left;}
+.kw{color:#a78bfa;}.fn{color:#60a5fa;}.str{color:#34d399;}.num{color:#f59e0b;}.cm{color:#475569;}
+.math-box{background:linear-gradient(135deg,rgba(79,142,247,0.06),rgba(167,139,250,0.06));border:1px solid rgba(79,142,247,0.2);border-radius:10px;padding:18px 22px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:14px;text-align:center;direction:ltr;color:var(--accent2);}
+.hl{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:9px;padding:14px 18px;margin:14px 0;font-size:13px;color:var(--accent3);line-height:1.7;}
+.warn{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:9px;padding:14px 18px;margin:14px 0;font-size:13px;color:var(--accent4);line-height:1.7;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0;}
+.tbl th{background:var(--surface2);color:var(--text2);padding:9px 13px;text-align:right;font-weight:600;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;}
+.tbl td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text2);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--surface2);}
+.diagram{display:flex;align-items:center;justify-content:center;gap:0;margin:20px 0;flex-wrap:wrap;direction:ltr;}
+.dnode{background:var(--surface2);border:2px solid var(--border);border-radius:9px;padding:10px 15px;text-align:center;font-size:11.5px;font-weight:600;min-width:80px;transition:all 0.2s;}
+.dnode:hover{border-color:var(--accent);color:var(--accent);}
+.darr{color:var(--text3);font-size:18px;padding:0 6px;}
+.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;}
+.act-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.act-name{font-weight:700;font-size:13px;margin-bottom:5px;font-family:'JetBrains Mono',monospace;}
+.act-formula{font-size:10px;color:var(--text3);margin-bottom:6px;font-family:'JetBrains Mono',monospace;direction:ltr;}
+.act-range{font-size:10px;font-weight:600;}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0;}
+.tag{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;}
+.tb{background:rgba(79,142,247,0.1);color:#60a5fa;border:1px solid rgba(79,142,247,0.2);}
+.tp{background:rgba(167,139,250,0.1);color:#a78bfa;border:1px solid rgba(167,139,250,0.2);}
+.tg{background:rgba(52,211,153,0.1);color:#34d399;border:1px solid rgba(52,211,153,0.2);}
+.ty{background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2);}
+.tr{background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.2);}
+.home-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:28px;}
+.home-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all 0.18s;}
+.home-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,142,247,0.1);}
+.home-card-icon{font-size:26px;margin-bottom:10px;}
+.home-card-title{font-size:14px;font-weight:700;margin-bottom:5px;}
+.home-card-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+.home-card-tag{font-size:10px;color:var(--accent);font-weight:700;margin-top:8px;letter-spacing:0.06em;text-transform:uppercase;}
+@media(max-width:768px){:root{--sidebar-w:220px;}#main{padding:24px 18px;}.grid-2,.home-grid,.act-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">📓 Learning Notes</div>
+    <div class="sidebar-sub">liorg · github.io</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="section-label">🧠 Deep Learning</div>
+    <div class="nav-item" data-page="epoch"><span class="nav-icon">🔄</span> Epoch & Training</div>
+    <div class="nav-item" data-page="backprop"><span class="nav-icon">⬅️</span> Backpropagation</div>
+    <div class="nav-item" data-page="activations"><span class="nav-icon">⚡</span> פונקציות אקטיבציה</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="section-label">💬 NLP</div>
+    <div class="nav-item" data-page="cbow"><span class="nav-icon">📦</span> CBOW & GloVe</div>
+    <div class="nav-item" data-page="rnn"><span class="nav-icon">🔁</span> RNN & LSTM</div>
+    <div class="nav-item" data-page="transformer"><span class="nav-icon">🤖</span> Transformer</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="section-label">📐 Math</div>
+    <div class="nav-item" data-page="derivatives"><span class="nav-icon">∂</span> נגזרות & כלל שרשרת</div>
+    <div class="nav-item" data-page="matrices"><span class="nav-icon">🔢</span> כפל מטריצות</div>
+    <div class="nav-item" data-page="graphs"><span class="nav-icon">📊</span> צירים & גרפים</div>
+    <div class="nav-item" data-page="cosine"><span class="nav-icon">📏</span> דמיון קוסינוס & מרחק</div>
+    <div class="nav-item" data-page="pca"><span class="nav-icon">🎯</span> PCA & מטריצות מיוחדות</div>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- HOME -->
+<div id="page-home" class="page-section">
+  <div class="hero-tag">liorg · GitHub Notes</div>
+  <h1 class="section-title" style="font-size:34px">מה שלמדתי<br><span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ב-Machine Learning</span></h1>
+  <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-top:10px">כל המושגים, הנוסחאות, והקוד — מסודרים לפי נושא.</p>
+  <div class="home-grid">
+    <div class="home-card" onclick="navigate('epoch')"><div class="home-card-icon">🔄</div><div class="home-card-title">Epoch & Training</div><div class="home-card-desc">לולאת אימון, batch size, learning rate</div><div class="home-card-tag">Deep Learning →</div></div>
+    <div class="home-card" onclick="navigate('backprop')"><div class="home-card-icon">⬅️</div><div class="home-card-title">Backpropagation</div><div class="home-card-desc">גרדיאנטים, עדכון משקלים</div><div class="home-card-tag">Deep Learning →</div></div>
+    <div class="home-card" onclick="navigate('activations')"><div class="home-card-icon">⚡</div><div class="home-card-title">פונקציות אקטיבציה</div><div class="home-card-desc">ReLU, Sigmoid, Tanh, Softmax, GELU</div><div class="home-card-tag">Deep Learning →</div></div>
+    <div class="home-card" onclick="navigate('cbow')"><div class="home-card-icon">📦</div><div class="home-card-title">CBOW & GloVe</div><div class="home-card-desc">Word Embeddings, king−man+woman</div><div class="home-card-tag">NLP →</div></div>
+    <div class="home-card" onclick="navigate('rnn')"><div class="home-card-icon">🔁</div><div class="home-card-title">RNN & LSTM</div><div class="home-card-desc">רצפים, forget gate, cell state</div><div class="home-card-tag">NLP →</div></div>
+    <div class="home-card" onclick="navigate('transformer')"><div class="home-card-icon">🤖</div><div class="home-card-title">Transformer</div><div class="home-card-desc">Self-Attention, Q/K/V, BERT, GPT</div><div class="home-card-tag">NLP →</div></div>
+    <div class="home-card" onclick="navigate('cosine')"><div class="home-card-icon">📏</div><div class="home-card-title">דמיון קוסינוס</div><div class="home-card-desc">Cosine similarity, מרחק אוקלידי</div><div class="home-card-tag">Math →</div></div>
+    <div class="home-card" onclick="navigate('pca')"><div class="home-card-icon">🎯</div><div class="home-card-title">PCA & מטריצות</div><div class="home-card-desc">אורתוגונלי, אלכסוני, SVD, Eigen</div><div class="home-card-tag">Math →</div></div>
+  </div>
+</div>
+
+<!-- EPOCH -->
+<div id="page-epoch" class="page-section">
+  <div class="hero-tag">Deep Learning</div>
+  <h2 class="section-title">🔄 Epoch & Training Loop</h2>
+  <p class="section-desc">Epoch = מעבר מלא על כל ה-dataset. כל epoch מורכב מ-batches — כל batch מעדכן את המשקלים.</p>
+  <div class="diagram">
+    <div class="dnode">Dataset</div><div class="darr">→</div>
+    <div class="dnode" style="border-color:#4f8ef7;color:#4f8ef7">Batch</div><div class="darr">→</div>
+    <div class="dnode">Forward</div><div class="darr">→</div>
+    <div class="dnode">Loss</div><div class="darr">→</div>
+    <div class="dnode">Backward</div><div class="darr">→</div>
+    <div class="dnode" style="border-color:#34d399;color:#34d399">Update W</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔑 מושגי מפתח</div>
+    <table class="tbl">
+      <tr><th>מושג</th><th>הגדרה</th><th>טיפוסי</th></tr>
+      <tr><td><code>Epoch</code></td><td>מעבר מלא על ה-dataset</td><td>10–100</td></tr>
+      <tr><td><code>Batch Size</code></td><td>כמה דוגמאות בכל עדכון</td><td>32, 64, 128</td></tr>
+      <tr><td><code>Iteration</code></td><td>עדכון משקלים אחד</td><td>N / batch_size</td></tr>
+      <tr><td><code>Learning Rate η</code></td><td>גודל הצעד</td><td>0.001 – 0.01</td></tr>
+    </table>
+  </div>
+  <div class="code-block"><span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(<span class="num">100</span>):
+    <span class="kw">for</span> X_batch, y_batch <span class="kw">in</span> dataloader:
+        y_pred = model(X_batch)
+        loss = criterion(y_pred, y_batch)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    <span class="fn">print</span>(<span class="str">f"Epoch {epoch}: Loss={loss.item():.4f}"</span>)</div>
+  <div class="hl">💡 <strong>Overfitting:</strong> train loss יורד אבל validation loss עולה → Dropout, Weight Decay, Early Stopping</div>
+</div>
+
+<!-- BACKPROP -->
+<div id="page-backprop" class="page-section">
+  <div class="hero-tag">Deep Learning</div>
+  <h2 class="section-title">⬅️ Backpropagation</h2>
+  <p class="section-desc">חישוב גרדיאנט ה-loss לכל משקל — מהפלט לכניסה — על ידי כלל השרשרת.</p>
+  <div class="card">
+    <div class="card-title">4 שלבים</div>
+    <table class="tbl">
+      <tr><th>#</th><th>שלב</th><th>מה קורה</th></tr>
+      <tr><td style="color:#60a5fa">1</td><td>Forward Pass</td><td>חשב פלט של כל שכבה</td></tr>
+      <tr><td style="color:#f59e0b">2</td><td>Compute Loss</td><td>השווה לתשובה הנכונה</td></tr>
+      <tr><td style="color:#a78bfa">3</td><td>Backward Pass</td><td>חשב ∂L/∂W לכל שכבה</td></tr>
+      <tr><td style="color:#34d399">4</td><td>Update Weights</td><td>W = W − η × ∂L/∂W</td></tr>
+    </table>
+  </div>
+  <div class="math-box">W_new = W_old − η · ∂L/∂W
+<br><br>∂L/∂W₁ = ∂L/∂y · ∂y/∂h · ∂h/∂W₁&nbsp;&nbsp;(כלל שרשרת)</div>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">backward</span>(dL_dy, x, W):
+    dL_dW = x.T @ dL_dy         <span class="cm"># ∂L/∂W</span>
+    dL_db = dL_dy.sum(axis=<span class="num">0</span>)  <span class="cm"># ∂L/∂b</span>
+    dL_dx = dL_dy @ W.T         <span class="cm"># לשכבה הקודמת</span>
+    <span class="kw">return</span> dL_dW, dL_db, dL_dx</div>
+  <div class="warn">⚠️ <strong>Vanishing Gradient:</strong> ברשתות עמוקות הגרדיאנט מתכווץ ל-0. פתרון: ReLU, BatchNorm, Skip Connections (ResNet).</div>
+</div>
+
+<!-- ACTIVATIONS -->
+<div id="page-activations" class="page-section">
+  <div class="hero-tag">Deep Learning</div>
+  <h2 class="section-title">⚡ פונקציות אקטיבציה</h2>
+  <p class="section-desc">מוסיפות אי-לינאריות — בלעדיהן הרשת שקולה למודל לינארי אחד בלבד.</p>
+  <div class="act-grid">
+    <div class="act-card"><div class="act-name" style="color:#60a5fa">ReLU</div><div class="act-formula">max(0, x)</div><div class="act-range" style="color:#60a5fa">[0, ∞)</div><p style="font-size:11px;color:var(--text3);margin-top:7px">הכי נפוץ. בעיה: Dead neurons</p></div>
+    <div class="act-card"><div class="act-name" style="color:#a78bfa">Sigmoid</div><div class="act-formula">1/(1+e⁻ˣ)</div><div class="act-range" style="color:#a78bfa">(0, 1)</div><p style="font-size:11px;color:var(--text3);margin-top:7px">סיווג בינארי. Vanishing gradient</p></div>
+    <div class="act-card"><div class="act-name" style="color:#34d399">Tanh</div><div class="act-formula">(eˣ−e⁻ˣ)/(eˣ+e⁻ˣ)</div><div class="act-range" style="color:#34d399">(−1, 1)</div><p style="font-size:11px;color:var(--text3);margin-top:7px">עדיף Sigmoid, מרוכז ב-0</p></div>
+    <div class="act-card"><div class="act-name" style="color:#f59e0b">Leaky ReLU</div><div class="act-formula">max(0.01x, x)</div><div class="act-range" style="color:#f59e0b">(−∞, ∞)</div><p style="font-size:11px;color:var(--text3);margin-top:7px">פותר Dead neurons של ReLU</p></div>
+    <div class="act-card"><div class="act-name" style="color:#f87171">Softmax</div><div class="act-formula">eˣⁱ/Σeˣʲ</div><div class="act-range" style="color:#f87171">סכום=1</div><p style="font-size:11px;color:var(--text3);margin-top:7px">שכבה אחרונה, multi-class</p></div>
+    <div class="act-card"><div class="act-name" style="color:#67e8f9">GELU</div><div class="act-formula">x·Φ(x)</div><div class="act-range" style="color:#67e8f9">smooth</div><p style="font-size:11px;color:var(--text3);margin-top:7px">BERT, GPT, Transformers</p></div>
+  </div>
+  <div class="hl">💡 Hidden layers → ReLU | Binary output → Sigmoid | Multi-class → Softmax | Transformer → GELU</div>
+</div>
+
+<!-- CBOW -->
+<div id="page-cbow" class="page-section">
+  <div class="hero-tag">NLP</div>
+  <h2 class="section-title">📦 CBOW & GloVe</h2>
+  <p class="section-desc">ייצוג מילים כווקטורים — מילים דומות מקבלות ווקטורים קרובים במרחב.</p>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">📦 CBOW</div><p>מנבא מילה מהקשרה.</p><div class="math-box" style="font-size:12px;padding:10px">["הכלב","רץ"] → [<strong>"מהר"</strong>] ← ["בגן"]</div></div>
+    <div class="card"><div class="card-title">🔀 Skip-gram</div><p>הפוך — מנבא הקשר ממילה.</p><div class="math-box" style="font-size:12px;padding:10px">[<strong>"מהר"</strong>] → ["הכלב","רץ","בגן"]</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🧊 GloVe — Global Vectors</div>
+    <p>משתמש במטריצת co-occurrence של כל הקורפוס.</p>
+    <div class="math-box">J = Σᵢⱼ f(Xᵢⱼ)(wᵢᵀw̃ⱼ + bᵢ + b̃ⱼ − log Xᵢⱼ)²</div>
+    <div class="hl">🎯 king − man + woman ≈ queen<br>המרחק בין ווקטורים משקף קשרים סמנטיים!</div>
+  </div>
+  <div class="code-block"><span class="kw">import</span> gensim.downloader <span class="kw">as</span> api
+model = api.load(<span class="str">'glove-wiki-gigaword-100'</span>)
+model.most_similar(<span class="str">'king'</span>)
+<span class="cm"># [('queen', 0.75), ('prince', 0.70), ...]</span>
+model.most_similar(positive=[<span class="str">'king'</span>,<span class="str">'woman'</span>], negative=[<span class="str">'man'</span>])
+<span class="cm"># → queen!</span></div>
+</div>
+
+<!-- RNN -->
+<div id="page-rnn" class="page-section">
+  <div class="hero-tag">NLP</div>
+  <h2 class="section-title">🔁 RNN & LSTM</h2>
+  <p class="section-desc">רשתות לעיבוד רצפים — כל צעד מקבל קלט + hidden state מהצעד הקודם.</p>
+  <div class="card">
+    <div class="card-title">🔁 RNN בסיסי</div>
+    <div class="math-box">hₜ = tanh(Wₕ·hₜ₋₁ + Wₓ·xₜ + b)
+<br>yₜ = Wᵧ·hₜ</div>
+    <div class="warn">⚠️ Vanishing Gradient — ברצפים ארוכים ה-RNN שוכח מידע ישן</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🧠 LSTM — 3 שערים (Gates)</div>
+    <table class="tbl">
+      <tr><th>Gate</th><th>תפקיד</th><th>נוסחה</th></tr>
+      <tr><td style="color:#f87171">Forget</td><td>מה לשכוח</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">fₜ = σ(Wf·[hₜ₋₁,xₜ])</td></tr>
+      <tr><td style="color:#60a5fa">Input</td><td>מה להוסיף</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">iₜ = σ(Wi·[hₜ₋₁,xₜ])</td></tr>
+      <tr><td style="color:#34d399">Output</td><td>מה להוציא</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">oₜ = σ(Wo·[hₜ₋₁,xₜ])</td></tr>
+    </table>
+    <div class="math-box" style="font-size:13px">Cₜ = fₜ ⊙ Cₜ₋₁ + iₜ ⊙ C̃ₜ
+<br>hₜ = oₜ ⊙ tanh(Cₜ)</div>
+  </div>
+  <div class="code-block">lstm = nn.LSTM(input_size=<span class="num">100</span>, hidden_size=<span class="num">256</span>, num_layers=<span class="num">2</span>, batch_first=<span class="kw">True</span>)
+output, (h_n, c_n) = lstm(x)
+<span class="cm"># output: (batch, seq_len, 256)</span>
+<span class="cm"># h_n: hidden state אחרון | c_n: cell state אחרון</span></div>
+</div>
+
+<!-- TRANSFORMER -->
+<div id="page-transformer" class="page-section">
+  <div class="hero-tag">NLP</div>
+  <h2 class="section-title">🤖 Transformer</h2>
+  <p class="section-desc">הארכיטקטורה מאחורי BERT, GPT, ChatGPT — Attention בלבד, ללא RNN.</p>
+  <div class="card">
+    <div class="card-title">🎯 Self-Attention</div>
+    <div class="math-box">Attention(Q,K,V) = softmax(QKᵀ / √dₖ) · V</div>
+    <table class="tbl">
+      <tr><th>סמל</th><th>שם</th><th>תפקיד</th></tr>
+      <tr><td style="color:#a78bfa;font-family:monospace">Q</td><td>Query</td><td>מה אני מחפש?</td></tr>
+      <tr><td style="color:#60a5fa;font-family:monospace">K</td><td>Key</td><td>מה יש לי להציע?</td></tr>
+      <tr><td style="color:#34d399;font-family:monospace">V</td><td>Value</td><td>המידע עצמו</td></tr>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">🏗️ Encoder</div><p style="font-size:13px">Self-Attention → Add&amp;Norm → FFN → Add&amp;Norm</p><p style="font-size:12px;color:var(--text3);margin-top:8px">שימוש: BERT, ייצוג טקסט</p></div>
+    <div class="card"><div class="card-title">🏗️ Decoder</div><p style="font-size:13px">Masked Attention → Cross-Attention → FFN</p><p style="font-size:12px;color:var(--text3);margin-top:8px">שימוש: GPT, יצירת טקסט</p></div>
+  </div>
+  <div class="tag-row">
+    <span class="tag tb">Multi-Head Attention</span>
+    <span class="tag tp">Feed Forward</span>
+    <span class="tag tg">Layer Norm</span>
+    <span class="tag ty">Residual Connection</span>
+    <span class="tag tr">Positional Encoding</span>
+  </div>
+  <div class="hl">💡 <strong>Positional Encoding:</strong> Transformer לא יודע סדר מילים — PE מוסיף sin/cos לכל מיקום ברצף.</div>
+</div>
+
+<!-- DERIVATIVES -->
+<div id="page-derivatives" class="page-section">
+  <div class="hero-tag">Math</div>
+  <h2 class="section-title">∂ נגזרות & כלל שרשרת</h2>
+  <p class="section-desc">הבסיס של Backpropagation — פירוק פונקציות מורכבות לשלבים.</p>
+  <div class="card">
+    <div class="card-title">📌 נגזרות חשובות ב-ML</div>
+    <table class="tbl">
+      <tr><th>פונקציה</th><th>נגזרת</th><th>שימוש</th></tr>
+      <tr><td style="font-family:monospace">xⁿ</td><td style="font-family:monospace">n·xⁿ⁻¹</td><td>פולינומים</td></tr>
+      <tr><td style="font-family:monospace">eˣ</td><td style="font-family:monospace">eˣ</td><td>Softmax, Sigmoid</td></tr>
+      <tr><td style="font-family:monospace">ln(x)</td><td style="font-family:monospace">1/x</td><td>Cross-Entropy Loss</td></tr>
+      <tr><td style="font-family:monospace">σ(x)</td><td style="font-family:monospace">σ(x)·(1−σ(x))</td><td>Sigmoid gradient</td></tr>
+      <tr><td style="font-family:monospace">max(0,x)</td><td style="font-family:monospace">0 or 1</td><td>ReLU gradient</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">⛓️ כלל השרשרת (Chain Rule)</div>
+    <p>אם <code>y = f(g(x))</code> אז:</p>
+    <div class="math-box">dy/dx = (dy/dg) · (dg/dx)
+<br><br>דוגמה: y = sin(x²)
+<br>dy/dx = cos(x²) · 2x</div>
+  </div>
+  <div class="code-block">x = torch.tensor([<span class="num">3.0</span>], requires_grad=<span class="kw">True</span>)
+y = x**<span class="num">2</span> + <span class="num">2</span>*x + <span class="num">1</span>
+y.backward()
+<span class="fn">print</span>(x.grad)  <span class="cm"># dy/dx = 2x+2 = 8.0</span></div>
+</div>
+
+<!-- MATRICES -->
+<div id="page-matrices" class="page-section">
+  <div class="hero-tag">Math</div>
+  <h2 class="section-title">🔢 כפל מטריצות</h2>
+  <p class="section-desc">כל שכבה ב-Neural Network היא בעצם כפל מטריצות.</p>
+  <div class="card">
+    <div class="card-title">📐 כלל הממדים</div>
+    <div class="math-box">A(m×n) · B(n×p) = C(m×p)
+<br><br>Cᵢⱼ = Σₖ Aᵢₖ · Bₖⱼ</div>
+    <div class="hl">💡 מספר עמודות A חייב = מספר שורות B</div>
+  </div>
+  <div class="code-block">A = np.array([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]])  <span class="cm"># 2×2</span>
+B = np.array([[<span class="num">5</span>,<span class="num">6</span>],[<span class="num">7</span>,<span class="num">8</span>]])  <span class="cm"># 2×2</span>
+C = A @ B                       <span class="cm"># matrix multiply</span>
+output = X @ W + b  <span class="cm"># (batch×input) @ (input×hidden) = (batch×hidden)</span></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">🔄 Transpose</div><div class="math-box" style="font-size:13px;padding:12px">(Aᵀ)ᵢⱼ = Aⱼᵢ</div><p style="font-size:12.5px;color:var(--text2)">שימוש: חישוב גרדיאנטים ב-backprop</p></div>
+    <div class="card"><div class="card-title">⚡ Hadamard ⊙</div><div class="math-box" style="font-size:13px;padding:12px">(A⊙B)ᵢⱼ = Aᵢⱼ·Bᵢⱼ</div><p style="font-size:12.5px;color:var(--text2)">כפל איבר-איבר. שימוש: LSTM gates</p></div>
+  </div>
+</div>
+
+<!-- GRAPHS -->
+<div id="page-graphs" class="page-section">
+  <div class="hero-tag">Math</div>
+  <h2 class="section-title">📊 צירים & גרפים</h2>
+  <p class="section-desc">ויזואליזציה של תהליך האימון ומרחב הפיצ'רים.</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📈 Loss Curve</div>
+      <div style="background:#060810;border-radius:8px;padding:14px;margin-top:10px;direction:ltr">
+        <svg width="100%" height="90" viewBox="0 0 200 90">
+          <polyline points="0,85 25,65 50,48 75,36 100,27 125,22 150,19 175,17 200,16" fill="none" stroke="#4f8ef7" stroke-width="2"/>
+          <polyline points="0,80 25,70 50,63 75,62 100,66 125,72 150,78 175,83 200,87" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="4"/>
+          <text x="5" y="12" fill="#4f8ef7" font-size="8" font-family="monospace">Train</text>
+          <text x="45" y="12" fill="#f87171" font-size="8" font-family="monospace">Validation</text>
+        </svg>
+      </div>
+      <p style="font-size:11.5px;color:var(--text3);margin-top:8px">Validation עולה בזמן Train יורד = overfitting</p>
+    </div>
+    <div class="card">
+      <div class="card-title">⛰️ Gradient Descent</div>
+      <div style="background:#060810;border-radius:8px;padding:14px;margin-top:10px;direction:ltr">
+        <svg width="100%" height="90" viewBox="0 0 200 90">
+          <path d="M10,10 Q100,110 190,10" fill="none" stroke="#334155" stroke-width="2"/>
+          <circle cx="165" cy="32" r="5" fill="#f59e0b"/>
+          <line x1="165" y1="32" x2="140" y2="52" stroke="#f59e0b" stroke-width="1.5"/>
+          <circle cx="140" cy="52" r="5" fill="#f59e0b"/>
+          <line x1="140" y1="52" x2="118" y2="68" stroke="#f59e0b" stroke-width="1.5"/>
+          <circle cx="118" cy="68" r="5" fill="#f59e0b"/>
+          <line x1="118" y1="68" x2="100" y2="78" stroke="#f59e0b" stroke-width="1.5"/>
+          <circle cx="100" cy="80" r="5" fill="#34d399"/>
+          <text x="88" y="90" fill="#34d399" font-size="8" font-family="monospace">minimum</text>
+        </svg>
+      </div>
+      <p style="font-size:11.5px;color:var(--text3);margin-top:8px">כל צעד = עדכון לפי גרדיאנט</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 Decision Boundary</div>
+    <div style="background:#060810;border-radius:8px;padding:14px;direction:ltr">
+      <svg width="100%" height="110" viewBox="0 0 280 110">
+        <line x1="130" y1="0" x2="110" y2="110" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5"/>
+        <circle cx="50" cy="30" r="6" fill="#4f8ef7" opacity="0.8"/>
+        <circle cx="70" cy="65" r="6" fill="#4f8ef7" opacity="0.8"/>
+        <circle cx="35" cy="80" r="6" fill="#4f8ef7" opacity="0.8"/>
+        <circle cx="80" cy="45" r="6" fill="#4f8ef7" opacity="0.8"/>
+        <circle cx="180" cy="25" r="6" fill="#f87171" opacity="0.8"/>
+        <circle cx="200" cy="60" r="6" fill="#f87171" opacity="0.8"/>
+        <circle cx="165" cy="80" r="6" fill="#f87171" opacity="0.8"/>
+        <circle cx="220" cy="40" r="6" fill="#f87171" opacity="0.8"/>
+        <text x="25" y="105" fill="#4f8ef7" font-size="9" font-family="monospace">Class A</text>
+        <text x="165" y="105" fill="#f87171" font-size="9" font-family="monospace">Class B</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- COSINE -->
+<div id="page-cosine" class="page-section">
+  <div class="hero-tag">Math</div>
+  <h2 class="section-title">📏 דמיון קוסינוס & מרחק</h2>
+  <p class="section-desc">מדדים לדמיון בין ווקטורים — הבסיס של חיפוש סמנטי ו-embeddings.</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🎯 Cosine Similarity</div>
+      <div class="math-box" style="font-size:13px">cos(θ) = (A·B) / (|A|·|B|)
+<br>טווח: [−1, 1]</div>
+      <table class="tbl">
+        <tr><td style="font-family:monospace">cos = 1</td><td>זהים לחלוטין</td></tr>
+        <tr><td style="font-family:monospace">cos = 0</td><td>ניצבים — לא קשורים</td></tr>
+        <tr><td style="font-family:monospace">cos = −1</td><td>מנוגדים</td></tr>
+      </table>
+      <div class="hl" style="margin-top:10px">💡 לא תלוי באורך — רק בכיוון!</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📐 מרחק אוקלידי (L2)</div>
+      <div class="math-box" style="font-size:13px">d(A,B) = √Σ(Aᵢ−Bᵢ)²
+<br>טווח: [0, ∞)</div>
+      <p style="font-size:13px;color:var(--text2);margin-top:10px">תלוי גם בגודל. מתאים כשהגודל משמעותי.</p>
+      <div class="warn" style="margin-top:10px">⚠️ High Dimensions — curse of dimensionality</div>
+    </div>
+  </div>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">cosine_sim</span>(a, b):
+    <span class="kw">return</span> np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+<span class="fn">print</span>(<span class="fn">cosine_sim</span>(model[<span class="str">'king'</span>], model[<span class="str">'queen'</span>]))  <span class="cm"># 0.75</span>
+<span class="fn">print</span>(<span class="fn">cosine_sim</span>(model[<span class="str">'king'</span>], model[<span class="str">'apple'</span>]))  <span class="cm"># 0.18</span></div>
+</div>
+
+<!-- PCA -->
+<div id="page-pca" class="page-section">
+  <div class="hero-tag">Math</div>
+  <h2 class="section-title">🎯 PCA & מטריצות מיוחדות</h2>
+  <p class="section-desc">PCA מצמצם ממדים תוך שמירת המידע החשוב. הלב: eigenvectors ומטריצות מיוחדות.</p>
+  <div class="card">
+    <div class="card-title">🎯 שלבי PCA</div>
+    <table class="tbl">
+      <tr><th>#</th><th>שלב</th><th>פעולה</th></tr>
+      <tr><td style="color:#60a5fa">1</td><td>Center</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">X = X − mean(X)</td></tr>
+      <tr><td style="color:#a78bfa">2</td><td>Covariance Matrix</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">C = XᵀX / (n−1)</td></tr>
+      <tr><td style="color:#f59e0b">3</td><td>Eigendecompose</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">C = V Λ Vᵀ</td></tr>
+      <tr><td style="color:#34d399">4</td><td>Project</td><td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">X_new = X · V[:, :k]</td></tr>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">🔲 מטריצה אורתוגונלית</div><div class="math-box" style="font-size:13px;padding:12px">Q·Qᵀ = I<br>Qᵀ = Q⁻¹</div><p style="font-size:12.5px;color:var(--text2)">עמודות ניצבות, אורך 1. משמרת מרחקים. = eigenvectors של PCA.</p></div>
+    <div class="card"><div class="card-title">📊 מטריצה אלכסונית</div><div class="math-box" style="font-size:13px;padding:12px">Λ = diag(λ₁,λ₂,...,λₙ)<br>Λᵢⱼ = 0 אם i≠j</div><p style="font-size:12.5px;color:var(--text2)">רק על האלכסון. הערכים = eigenvalues = חשיבות כל כיוון.</p></div>
+  </div>
+  <div class="code-block"><span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA
+pca = PCA(n_components=<span class="num">2</span>)
+X_2d = pca.fit_transform(X)
+<span class="fn">print</span>(pca.explained_variance_ratio_.sum())  <span class="cm"># % שנשמר</span>
+<span class="fn">print</span>(pca.components_)                      <span class="cm"># eigenvectors</span></div>
+  <div class="card">
+    <div class="card-title">🔑 SVD — Singular Value Decomposition</div>
+    <p>הכללה של PCA לכל מטריצה:</p>
+    <div class="math-box">A = U · Σ · Vᵀ</div>
+    <table class="tbl">
+      <tr><td style="font-family:monospace;color:#60a5fa">U</td><td>eigenvectors של AAᵀ (left)</td></tr>
+      <tr><td style="font-family:monospace;color:#f59e0b">Σ</td><td>singular values = √eigenvalues</td></tr>
+      <tr><td style="font-family:monospace;color:#34d399">Vᵀ</td><td>eigenvectors של AᵀA (right)</td></tr>
+    </table>
+    <div class="hl" style="margin-top:10px">💡 שימוש: GloVe, LSA, Recommendation Systems, Image Compression</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const PAGES = ['home','epoch','backprop','activations','cbow','rnn','transformer','derivatives','matrices','graphs','cosine','pca'];
+
+function navigate(page) {
+  if (!PAGES.includes(page)) page = 'home';
+  window.location.hash = page === 'home' ? '/' : '/' + page;
+  render(page);
+}
+
+function render(page) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item[data-page="' + page + '"]').forEach(n => n.classList.add('active'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => navigate(item.dataset.page));
+});
+
+function fromHash() {
+  const hash = window.location.hash.replace(/^#\/?/, '');
+  render(PAGES.includes(hash) ? hash : 'home');
+}
+
+window.addEventListener('hashchange', fromHash);
+fromHash();
+</script>
+</body>
+</html>
