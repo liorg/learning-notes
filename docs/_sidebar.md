@@ -6,5 +6,5 @@
   - [Matrix](deep-learning/matrix.md)
 
 - Math
-  - [linear Regration](math/linear-regration.md)
-  - [logic Regration](math/logic-regration.md)
+  - [Linear Regression](math/linear-regression.md)
+  - [Logistic Regression](math/logistic-regression.md)
