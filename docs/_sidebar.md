@@ -1,9 +1,9 @@
 # Topics
 
 - [Home](/)
-- 
-~Deep Learning
+  
+~[Deep Learning]
    [Matrix](Dl/Epoches.md)
-- Math 
+- [Math]
   - [linear Regration](math/linear.md)
   - [logic Regration](math/nonlinear.md)
