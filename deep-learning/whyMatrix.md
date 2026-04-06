@@ -66,26 +66,7 @@ $$
 z = W x
 $$
 
-כלומר:
 
-$$
-\begin{bmatrix}
-0.1 & 0.1 & 0.8 \\
-0.2 & 0.7 & 0.2 \\
-0.9 & 0.1 & 0.0
-\end{bmatrix}
-\begin{bmatrix}
-20 \\
-70 \\
-180
-\end{bmatrix}
-=
-\begin{bmatrix}
-153 \\
-89 \\
-25
-\end{bmatrix}
-$$
 
 ---
 
