@@ -6,6 +6,15 @@
 
 ## 🧠 Deep Learning
 
+
+colab
+# Learning Notes
+
+## ML / Loss
+
+- loss_function  
+  [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/liorg/learning-notes/blob/main/ml/loss/loss_function.ipynb)
+
 | נושא | תיאור |
 |------|-------|
 | [🔄 Epoch & Training](deep-learning/epoch.md) | Training loop, batch, loss |
