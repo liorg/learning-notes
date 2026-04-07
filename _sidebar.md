@@ -1,4 +1,4 @@
-# 📓 Learning Notes
+# 📓 Learning Notes items
 
 - **🏠 [ראשי](README.md)**
 
