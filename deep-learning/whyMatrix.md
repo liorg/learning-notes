@@ -147,3 +147,6 @@ $$
 $$
 z = W x
 $$
+
+
+[Matrix Multiplication Example](https://gist.github.com/liorg/4228cffe10527b3b9ffcf5834312dc00)
